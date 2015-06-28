@@ -6,6 +6,8 @@ Change your mac address! Change your hostname! Fun for all the family! *
 
 \* May not actually be fun for ALL the family. Your dog probably doesn't care about this.
 
+![Screenshot](screenshots/screenshot.png)
+
 ## What is it?
 An app that allows for randomising MAC addresses and hostnames on an android device. May not work with every android device around - try it out to see if it works!
 
