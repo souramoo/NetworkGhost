@@ -1,0 +1,4 @@
+#!/system/xbin/bash
+
+/system/xbin/busybox ifconfig wlan0 up hw ether $(cat /dev/mac)
+/system/bin/wpa_supplicant_real $@

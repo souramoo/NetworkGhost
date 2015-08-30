@@ -77,3 +77,6 @@ It was necessary to turn it off the Android(TM) way, i.e.
 svc wifi disable
 ```
 Which kills wpa_supplicant, allowing us to swap out the mac address and turn wifi back on (which restarts wpa_supplicant, forcing it to re-read the mac address into memory). I have kept the commands running in a root shell to a minimum, since the wifi start/stop can be achieved in java.
+
+## Extension: HTC one
+For my HTC one, the above method does not work because on wifi restart, the device is brought down and up before wpa_supplicant is called. /dev is mounted as tmpfs so to save flash read-write cycles, I made a script that replaces wpa_supplicant. Move /system/bin/wpa_supplicant to /system/bin/wpa_supplicant_real and adb push scripts/wpa_supplicant /system/bin/wpa_supplicant - the git version of the app will now push the mac address to /dev/mac and it will be set just before calling wpa_supplicant for realz.

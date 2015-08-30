@@ -68,7 +68,8 @@ public class Util {
         } catch(Exception e){}
 
         System.out.println("setting MAC: " + rmac);
-        runCmd(new CommandCapture(0, "busybox ifconfig wlan0 hw ether " + rmac));
+        //runCmd(new CommandCapture(0, "busybox ifconfig wlan0 hw ether " + rmac));
+        runCmd(new CommandCapture(0, "echo \"" + rmac + "\" > /dev/mac"));
         try {
             Thread.sleep(200);
         } catch(Exception e){}
