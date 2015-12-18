@@ -161,7 +161,7 @@ public class Util {
         // inject our script
         dialog.setMessage("Injecting our mac changing code");
 
-        command = new Command(0, "echo '#!/system/xbin/bash|/system/xbin/busybox ifconfig wlan0 up hw ether $(cat /dev/mac)|/system/bin/wpa_supplicant_real $@' | sed 's/|/\\n/g' > /system/bin/wpa_supplicant", "chmod +x /system/bin/wpa_supplicant") {
+        command = new Command(0, "echo '#!/system/xbin/bash|/system/xbin/busybox ifconfig wlan0 up hw ether $(cat /dev/mac)|/system/bin/wpa_supplicant_real $@' | sed 's/|/\\n/g' > /system/bin/wpa_supplicant", "busybox chmod +x /system/bin/wpa_supplicant") {
             @Override
             public void output(int id, String line) {
             }
