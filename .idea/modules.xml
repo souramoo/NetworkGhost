@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NetGhost.iml" filepath="$PROJECT_DIR$/NetGhost.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NetworkGhost.iml" filepath="$PROJECT_DIR$/NetworkGhost.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -1,6 +1,8 @@
 package com.moosd.netghost;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,14 +21,16 @@ public class MainActivity extends Activity {
 
     EditText macEntry = null, hostEntry = null;
     ToggleButton macToggle = null, hostToggle = null;
-    Button updateButton = null, revertButton = null;
+    Button updateButton = null, revertButton = null, uninstallButton = null;
     SharedPreferences settings = null;
     Switch spoofSwitch = null;
+    public static MainActivity me = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        me = this;
 
         settings = getSharedPreferences("settings", 0);
 
@@ -38,6 +42,7 @@ public class MainActivity extends Activity {
 
         updateButton = ((Button) findViewById(R.id.button3));
         revertButton = ((Button) findViewById(R.id.button));
+        uninstallButton = ((Button) findViewById(R.id.button4));
 
         spoofSwitch = ((Switch) findViewById(R.id.switch1));
 
@@ -46,7 +51,12 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 // update settings
-                settings.edit().putBoolean("spoofenabled", isChecked).commit();
+                if(!Util.isInstalled() && isChecked) {
+                    Util.askToInstall(MainActivity.this, true);
+                }
+                if(Util.isInstalled()) {
+                    settings.edit().putBoolean("spoofenabled", isChecked).commit();
+                }
                 // update ux
                 updateUX();
             }
@@ -182,6 +192,26 @@ public class MainActivity extends Activity {
             }
         });
 
+        uninstallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Unnstall")
+                        .setMessage("Are you sure you want to uninstall the changes to /system? You will not be able to modify your mac address.")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                settings.edit().putBoolean("spoofenabled", false).commit();
+                                Util.uninstall(MainActivity.this);
+                                updateUX();
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
+
     }
 
     @Override
@@ -190,7 +220,7 @@ public class MainActivity extends Activity {
         updateUX();
     }
 
-    private void updateUX() {
+    public void updateUX() {
         boolean macrandomise = settings.getBoolean("macrandomise", false), hostrandomise = settings.getBoolean("hostrandomise", false), spoofenabled = settings.getBoolean("spoofenabled", true);
 
         macEntry.setText(settings.getString("macset", Util.getMAC()));
@@ -199,6 +229,8 @@ public class MainActivity extends Activity {
 
         macToggle.setEnabled(spoofenabled);
         hostToggle.setEnabled(spoofenabled);
+
+        uninstallButton.setEnabled(Util.isInstalled());
 
         if(spoofenabled) {
             macToggle.setChecked(macrandomise);

@@ -1,10 +1,10 @@
 # Network Ghost
 
-Android MAC/Hostname Spoofing in Lollipop 5.1 (And probably older Androids too) (tested on Galaxy S4 w/ cyanogenmod 12.1)
+Android MAC/Hostname Spoofing in Lollipop 5.1 (And probably older Androids too) (tested on Galaxy S4 and HTC One M7/M9 w/ cyanogenmod 12.1)
 
 Change your mac address! Change your hostname! Fun for all the family! *
 
-\* May not actually be fun for ALL the family. Your dog probably doesn't care about this.
+\* May not actually be true.
 
 ![Screenshot](screenshots/screenshot.png)
 
@@ -24,6 +24,8 @@ Finally, there seems to be a distinct lack of open source apps that let me chang
 
 ## Where does it definitely work?
 * Samsung Galaxy S4 running Cyanogenmod 12.1
+* HTC One M7
+* HTC One M9
 
 NOTE: Some MAC addresses cannot be set. For example, "11:22:33:44:55:66" will not work on my S4 but "00:11:22:33:44:55" will.
 
@@ -31,7 +33,9 @@ NOTE: Some MAC addresses cannot be set. For example, "11:22:33:44:55:66" will no
 Install the apk file!
 
 ## How do I use it?
-Open up the app, hit the toggle button to change "User-set" to "randomise" and hit "update". Verify the mac has really been changed to what the app says by opening up a terminal and running:
+Open up the app, flip the spoof switch. You will be asked to okay an update to /system files to allow this to work.
+
+Hit the toggle button to change "User-set" to "randomise" and hit "update". Verify the mac has really been changed to what the app says by opening up a terminal and running:
 ```
 adb shell ip addr
 ```
@@ -76,7 +80,10 @@ It was necessary to turn it off the Android(TM) way, i.e.
 ```
 svc wifi disable
 ```
-Which kills wpa_supplicant, allowing us to swap out the mac address and turn wifi back on (which restarts wpa_supplicant, forcing it to re-read the mac address into memory). I have kept the commands running in a root shell to a minimum, since the wifi start/stop can be achieved in java.
+Which kills wpa_supplicant, allowing us to swap out the mac address and turn wifi back on (which restarts wpa_supplicant, forcing it to re-read the mac address into memory).
 
-## Extension: HTC one
-For my HTC one, the above method does not work because on wifi restart, the device is brought down and up before wpa_supplicant is called. /dev is mounted as tmpfs so to save flash read-write cycles, I made a script that replaces wpa_supplicant. Move /system/bin/wpa_supplicant to /system/bin/wpa_supplicant_real and adb push scripts/wpa_supplicant /system/bin/wpa_supplicant - the git version of the app will now push the mac address to /dev/mac and it will be set just before calling wpa_supplicant for realz.
+But some devices bring down the network interface when the wifi is turned off, not letting us change the mac address. And when it's brought back up, wpa_supplicant is started up and the mac address is locked in again! What a travesty!
+
+But it's okay, I've come up with a workaround. This app will now install the workaround into /system and this new method should be more portable across devices.
+
+I have kept the commands running in a root shell to a minimum, since the wifi start/stop can be achieved in java.
