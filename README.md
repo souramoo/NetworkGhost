@@ -55,6 +55,7 @@ Yes! Send an intent. Currently, you could send:
 * com.moosd.netghost.SET_MAC_ONESHOT - This forces a given MAC to be used right now, and don't remember it for next time. This means you can change the mac temporarily until the next time wifi is turned off and on again. The mac address should be supplied in an extra called "mac".
 
 To use this from tasker:
+
 1. Open the task you want to add mac-changing magic to.
 2. Add a new "Send Intent" action (search for send intent in the search box)
 3. Set the "Action" to one of the intents mentioned above, e.g. com.moosd.netghost.SET_MAC_ONESHOT
