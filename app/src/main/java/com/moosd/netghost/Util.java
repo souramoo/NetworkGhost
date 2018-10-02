@@ -7,10 +7,9 @@ import android.content.DialogInterface;
 import android.net.wifi.WifiManager;
 
 import android.provider.ContactsContract;
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
-import com.stericson.RootTools.execution.Command;
-import com.stericson.RootTools.execution.CommandCapture;
+
+
+import com.stericson.RootShell.execution.Command;
 
 import java.io.FileInputStream;
 import java.io.IOException;
