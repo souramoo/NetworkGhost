@@ -6,9 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.wifi.WifiManager;
 
-import android.provider.ContactsContract;
-
-
+import com.stericson.RootShell.RootShell;
+import com.stericson.RootShell.exceptions.RootDeniedException;
 import com.stericson.RootShell.execution.Command;
 
 import java.io.FileInputStream;
@@ -56,7 +55,7 @@ public class Util {
         final String[] result = {""};
         Command command = new Command(0, "mount -o rw,remount /system") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
             }
         };
         runCmd(command);
@@ -64,7 +63,7 @@ public class Util {
         // check if success
         command = new Command(0, "mount|grep system") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
                 if(line.contains("rw")) result[0] = "yes";
             }
         };
@@ -80,7 +79,7 @@ public class Util {
         // move wpa_supplicant
         command = new Command(0, "mv /system/bin/wpa_supplicant_real /system/bin/wpa_supplicant") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
             }
         };
         runCmd(command);
@@ -88,7 +87,7 @@ public class Util {
         // check if success
         command = new Command(0, "ls /system/bin/wpa_*") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
                 if(line.contains("_real")) result[0] = "yes";
             }
         };
@@ -113,7 +112,8 @@ public class Util {
         final String[] result = {""};
         Command command = new Command(0, "mount -o rw,remount /system") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
+                super.commandOutput(id, line);
             }
         };
         runCmd(command);
@@ -121,8 +121,9 @@ public class Util {
         // check if success
         command = new Command(0, "mount|grep system") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
                 if(line.contains("rw")) result[0] = "yes";
+                super.commandOutput(id, line);
             }
         };
         runCmd(command);
@@ -137,7 +138,8 @@ public class Util {
         // move wpa_supplicant
         command = new Command(0, "mv /system/bin/wpa_supplicant /system/bin/wpa_supplicant_real") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
+                super.commandOutput(id, line);
             }
         };
         runCmd(command);
@@ -145,8 +147,9 @@ public class Util {
         // check if success
         command = new Command(0, "ls /system/bin/wpa_*") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
                 if(line.contains("_real")) result[0] = "yes";
+                super.commandOutput(id, line);
             }
         };
         runCmd(command);
@@ -162,7 +165,8 @@ public class Util {
 
         command = new Command(0, "echo '#!/system/xbin/bash|/system/xbin/busybox ifconfig wlan0 up hw ether $(cat /dev/mac)|/system/bin/wpa_supplicant_real $@' | sed 's/|/\\n/g' > /system/bin/wpa_supplicant", "busybox chmod +x /system/bin/wpa_supplicant") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
+                super.commandOutput(id, line);
             }
         };
         runCmd(command);
@@ -177,14 +181,16 @@ public class Util {
             dialog.setMessage("Error inserting out wpa_supplicant. Trying to revert...");
             command = new Command(0, "mv /system/bin/wpa_supplicant_real /system/bin/wpa_supplicant") {
                 @Override
-                public void output(int id, String line) {
+                public void commandOutput(int id, String line) {
+                    super.commandOutput(id, line);
                 }
             };
             runCmd(command);
             command = new Command(0, "ls /system/bin/wpa_*") {
                 @Override
-                public void output(int id, String line) {
+                public void commandOutput(int id, String line) {
                     if(line.contains("_real")) result[0] = "yes";
+                    super.commandOutput(id, line);
                 }
             };
             runCmd(command);
@@ -216,14 +222,7 @@ public class Util {
     public static void runCmd(Command command) {
         boolean finished = false;
         try {
-            Command com = RootTools.getShell(true).add(command);
-            while (!finished) {
-                try {
-                    com.waitForFinish(100);
-                    finished = true;
-                } catch (InterruptedException e) {
-                }
-            }
+            Command com = RootShell.getShell(true, 100).add(command);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (RootDeniedException e) {
@@ -292,7 +291,7 @@ public class Util {
         final String[] result = {"deadbebe"};
         Command command = new Command(0, "busybox ip addr show dev wlan0") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
                 if (line.contains("link/ether")) {
                     String[] split = line.trim().split(" ");
                     System.out.println("MAC - " + split[1]);
@@ -308,7 +307,7 @@ public class Util {
         final String[] result = {"deadbebe"};
         Command command = new Command(0, "getprop net.hostname") {
             @Override
-            public void output(int id, String line) {
+            public void commandOutput(int id, String line) {
                 result[0] = line;
             }
         };
