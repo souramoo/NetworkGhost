@@ -259,7 +259,14 @@ public class Util {
             askToInstall(context);
             return;
         }
-        runCmd(new CommandCapture(0, "setenforce 0"));
+        Command command = new Command(0, "setenforce 0") {
+            @Override
+            public void commandOutput(int id, String line) {
+                RootShell.log("Command", "ID: " + id + ", " + line);
+                super.commandOutput(id, line);
+            }
+        };
+        runCmd(command);
         try {
             Thread.sleep(200);
         } catch (Exception e) {
@@ -274,7 +281,14 @@ public class Util {
 
         System.out.println("setting MAC: " + rmac);
         //runCmd(new CommandCapture(0, "busybox ifconfig wlan0 hw ether " + rmac));
-        runCmd(new CommandCapture(0, "echo \"" + rmac + "\" > /dev/mac"));
+        command = new Command(0, "echo \\\"\" + rmac + \"\\\" > /dev/mac") {
+            @Override
+            public void commandOutput(int id, String line) {
+                RootShell.log("Command", "ID: " + id + ", " + line);
+                super.commandOutput(id, line);
+            }
+        };
+        runCmd(command);
         try {
             Thread.sleep(200);
         } catch (Exception e) {
@@ -284,7 +298,14 @@ public class Util {
     }
 
     public static void setHost(String host) {
-        runCmd(new CommandCapture(0, "setprop net.hostname " + host));
+        Command command = new Command(0, "setprop net.hostname " + host) {
+            @Override
+            public void commandOutput(int id, String line) {
+                RootShell.log("Command", "ID: " + id + ", " + line);
+                super.commandOutput(id, line);
+            }
+        };
+        runCmd(command);
     }
 
     public static String getMAC() {
